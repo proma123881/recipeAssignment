@@ -5,6 +5,7 @@ import com.abnamro.assignment.recipes.api.model.RecipeApiResponse;
 import com.abnamro.assignment.recipes.api.model.RecipeId;
 import com.abnamro.assignment.recipes.persistence.RecipeRepository;
 import com.abnamro.assignment.recipes.persistence.model.RecipeEntity;
+import com.abnamro.assignment.recipes.persistence.model.RecipeEntity_;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -92,9 +93,15 @@ public class RecipeController {
 
     @GetMapping("/recipes")
     ResponseEntity getAllRecipes(@RequestParam( value = "isVegetarian", required = false) Boolean isVegetarian,
-                                 @RequestParam( value = "instructionContains", required = false) String instructionContains) {
+                                 @RequestParam( value = "instructionContains", required = false) String instructionContains,
+                                 @RequestParam( value = "noOfServings", required = false) Integer noOfServings,
+                                 @RequestParam( value = "ingredients", required = false) List<String> ingredients
+                                 ) {
         List<RecipeEntity> recipes = recipeRepository.findAll(where(isVegetarian(isVegetarian))
-                 .and(instructionContains(instructionContains)));
+                 .and(instructionContains(instructionContains))
+                .and(equalsNoOfServings(noOfServings))
+                .and(containtsIngredients(ingredients))
+        );
 
         return  ResponseEntity.ok(recipes);
     }
@@ -142,26 +149,6 @@ public class RecipeController {
 
         return  ResponseEntity.status(status).cacheControl(CacheControl.noStore().cachePrivate()).body(response);
     }
-    EntityManager em;
-    private List<RecipeEntity> findRecipesByCriteria( Boolean isVegetarian,
-                                                     String instructionContains) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<RecipeEntity> cq = cb.createQuery(RecipeEntity.class);
-
-        Root<RecipeEntity> recipe = cq.from(RecipeEntity.class);
-        if (isVegetarian != null) {
-            Predicate vegetarianPredicate = cb.equal(recipe.get("isVegetarian"), isVegetarian);
-            cq.where(vegetarianPredicate);
-        }
-
-        if (instructionContains != null) {
-            Predicate instructionPredicate = cb.like(recipe.get("instruction"), "%" + instructionContains + "%");
-            cq.where(instructionPredicate);
-        }
-
-        TypedQuery<RecipeEntity> query = em.createQuery(cq);
-        return query.getResultList();
-    }
 
     static Specification<RecipeEntity> isVegetarian(Boolean isVegetarian) {
         if (isVegetarian != null) {
@@ -184,7 +171,7 @@ public class RecipeController {
 
 
 
-    static Specification<RecipeEntity> noOfServings(Integer noOfServings) {
+    static Specification<RecipeEntity> equalsNoOfServings(Integer noOfServings) {
         if (noOfServings != null) {
             return (recipe, cq, cb) -> cb.equal(recipe.get("noOfServings"),  noOfServings);
         } else {
@@ -193,19 +180,15 @@ public class RecipeController {
 
     }
 
-    static Specification<RecipeEntity> containtsIngredients(List<String> containsIngredients) {
-        if (containsIngredients != null)
-
-            return (recipe, cq, cb) -> {
-                Expression<List<RecipeEntity>> bList = recipe.get(.);
-                cb.isMember(recipe.get("ingredients"),
-                        containsIngredients.get(0));
-            }
-        } else {
+    static Specification<RecipeEntity> containtsIngredients(List<String> ingredients) {
+        if (ingredients != null)
+        {
+            return (recipe, cq, cb) -> cb.isMember(ingredients.get(0),
+                    recipe.get(RecipeEntity_.ingredients));
+        }
+        else {
             return null;
         }
-
-
-
     }
+
 }
