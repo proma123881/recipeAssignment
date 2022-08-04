@@ -35,7 +35,7 @@ public class RecipeEntity {
                     ),
                     @org.hibernate.annotations.Parameter(
                             name = "increment_size",
-                            value = "5"
+                            value = "1"
                     ),
                     @org.hibernate.annotations.Parameter(
                             name = "sequence_name",

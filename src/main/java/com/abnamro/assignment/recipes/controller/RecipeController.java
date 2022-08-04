@@ -3,9 +3,11 @@ package com.abnamro.assignment.recipes.controller;
 import com.abnamro.assignment.recipes.api.model.Recipe;
 import com.abnamro.assignment.recipes.api.model.RecipeApiResponse;
 import com.abnamro.assignment.recipes.api.model.RecipeId;
+import com.abnamro.assignment.recipes.mapper.DataMapper;
 import com.abnamro.assignment.recipes.persistence.RecipeRepository;
 import com.abnamro.assignment.recipes.persistence.model.RecipeEntity;
 import com.abnamro.assignment.recipes.persistence.model.RecipeEntity_;
+import com.abnamro.assignment.recipes.service.RecipeApiService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,7 +29,7 @@ import static org.springframework.data.jpa.domain.Specification.where;
 @AllArgsConstructor
 public class RecipeController {
 
- private final RecipeRepository recipeRepository;
+ private final RecipeApiService recipeApiService;
 
     /**
      * Create Recipe
@@ -37,14 +39,9 @@ public class RecipeController {
     @PostMapping("/recipes")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> addRecipe(@Valid @RequestBody Recipe recipe) {
-       RecipeEntity recipeEntity = recipeRepository.save(RecipeEntity.builder().isVegetarian(recipe.isVegetarian())
-                .recipeName(recipe.getRecipeName())
-                .noOfServings(recipe.getNoOfServings())
-               .ingredients(recipe.getIngredients())
-               .instruction(recipe.getInstruction())
-               .build());
-       RecipeId recipeId = new RecipeId();
-        recipeId.setId(recipeEntity.getId());
+
+       RecipeId recipeId =  recipeApiService.addRecipe(recipe);
+
         return apiResponse(recipeId, HttpStatus.CREATED);
     }
     /**
@@ -57,26 +54,8 @@ public class RecipeController {
     @PutMapping("/recipes/{id}")
     public ResponseEntity<?> updateRecipe(@RequestBody Recipe newRecipe, @PathVariable Long id) {
 
+       RecipeId recipeId = recipeApiService.updateRecipe(newRecipe, id);
 
-            RecipeEntity recipeEntity = recipeRepository.findById(id)
-                    .map(recipe -> {
-                        recipe.setRecipeName(newRecipe.getRecipeName());
-                        recipe.setInstruction(newRecipe.getInstruction());
-                        recipe.setNoOfServings(newRecipe.getNoOfServings());
-                        recipe.setVegetarian(newRecipe.isVegetarian());
-                        recipe.setIngredients(newRecipe.getIngredients());
-                        return recipeRepository.save(recipe);
-                    })
-                    .orElseGet(() -> {
-                        return  recipeRepository.save(RecipeEntity.builder().isVegetarian(newRecipe.isVegetarian())
-                                .recipeName(newRecipe.getRecipeName())
-                                .noOfServings(newRecipe.getNoOfServings())
-                                .ingredients(newRecipe.getIngredients())
-                                .instruction(newRecipe.getInstruction())
-                                .build());
-                    });
-        RecipeId recipeId = new RecipeId();
-        recipeId.setId(recipeEntity.getId());
         return apiResponse(recipeId, HttpStatus.OK);
 
         }
@@ -95,29 +74,15 @@ public class RecipeController {
     ResponseEntity getAllRecipes(@RequestParam( value = "isVegetarian", required = false) Boolean isVegetarian,
                                  @RequestParam( value = "instructionContains", required = false) String instructionContains,
                                  @RequestParam( value = "noOfServings", required = false) Integer noOfServings,
-                                 @RequestParam( value = "ingredients", required = false) List<String> ingredients
+                                 @RequestParam( value = "presentIngredients", required = false) List<String> presentIngredients,
+                                 @RequestParam( value = "absentIngredients", required = false) List<String> absentIngredients
                                  ) {
-        List<RecipeEntity> recipes = recipeRepository.findAll(where(isVegetarian(isVegetarian))
-                 .and(instructionContains(instructionContains))
-                .and(equalsNoOfServings(noOfServings))
-                .and(containtsIngredients(ingredients))
-        );
+        List<RecipeEntity> recipes = recipeApiService.getAllRecipes(isVegetarian, instructionContains,
+                noOfServings, presentIngredients, absentIngredients);
 
         return  ResponseEntity.ok(recipes);
     }
 
-    /**
-     * Get recipe by id
-     * @param
-     * @param
-     * @return ResponseEntity
-     */
-
-    @GetMapping("/recipes/{id}")
-    ResponseEntity getRecipeById(@PathVariable Long id) {
-
-        return null;
-    }
 
     /**
      * Delete recipe by id
@@ -126,10 +91,10 @@ public class RecipeController {
      * @return ResponseEntity
      */
     @DeleteMapping("/recipes/{id}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteEmployee(@PathVariable Long id) {
 
-        recipeRepository.deleteById(id);
+        recipeApiService.deleteEmployee(id);
     }
 
 
@@ -150,45 +115,6 @@ public class RecipeController {
         return  ResponseEntity.status(status).cacheControl(CacheControl.noStore().cachePrivate()).body(response);
     }
 
-    static Specification<RecipeEntity> isVegetarian(Boolean isVegetarian) {
-        if (isVegetarian != null) {
-            return (recipe, cq, cb) -> cb.equal(recipe.get("isVegetarian"), isVegetarian);
-        } else {
-            return null;
-        }
 
-
-    }
-
-    static Specification<RecipeEntity> instructionContains(String instructionContains) {
-        if (instructionContains != null) {
-            return (recipe, cq, cb) -> cb.like(recipe.get("instruction"), "%" + instructionContains + "%");
-        } else {
-            return null;
-        }
-
-    }
-
-
-
-    static Specification<RecipeEntity> equalsNoOfServings(Integer noOfServings) {
-        if (noOfServings != null) {
-            return (recipe, cq, cb) -> cb.equal(recipe.get("noOfServings"),  noOfServings);
-        } else {
-            return null;
-        }
-
-    }
-
-    static Specification<RecipeEntity> containtsIngredients(List<String> ingredients) {
-        if (ingredients != null)
-        {
-            return (recipe, cq, cb) -> cb.isMember(ingredients.get(0),
-                    recipe.get(RecipeEntity_.ingredients));
-        }
-        else {
-            return null;
-        }
-    }
 
 }

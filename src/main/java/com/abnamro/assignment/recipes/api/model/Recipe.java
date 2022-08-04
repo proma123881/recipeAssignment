@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,10 +26,13 @@ public class Recipe {
 
     @NotBlank
     private String recipeName;
-    private boolean isVegetarian;
     @NotNull
+    private Boolean isVegetarian;
+    @NotNull
+    @Positive
     private Integer noOfServings;
     @NotNull
+    @NotEmpty
     private Set<String> ingredients = new HashSet<>();
     private String instruction;
 }
