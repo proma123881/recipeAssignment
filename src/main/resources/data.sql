@@ -1,3 +1,5 @@
+delete from RECIPE_INGREDIENTS;
+delete from RECIPE;
 
 insert into RECIPE(ID, RECIPE_NAME, IS_VEGETARIAN, NO_OF_SERVINGS, INSTRUCTION) values
 (80, 'chicken biriyani', false, 4, 'put chicken and rice together'),

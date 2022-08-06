@@ -26,7 +26,7 @@ public class TestUtils {
         RecipeEntity recipe = new RecipeEntity();
         recipe.setId(1L);
         recipe.setRecipeName("muffin");
-        recipe.setVegetarian(false);
+        recipe.setIsVegetarian(false);
         recipe.setNoOfServings(4);
         recipe.setInstruction("put chocolate");
         Set<String> ingredients = new HashSet<>(Arrays.asList("chocolate", "sugar"));

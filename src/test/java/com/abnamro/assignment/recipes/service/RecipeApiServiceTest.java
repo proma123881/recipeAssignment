@@ -4,9 +4,11 @@ package com.abnamro.assignment.recipes.service;
 import com.abnamro.assignment.recipes.BaseIntegrationTest;
 import com.abnamro.assignment.recipes.api.model.Recipe;
 import com.abnamro.assignment.recipes.api.model.RecipeId;
+import com.abnamro.assignment.recipes.api.model.RecipesResponse;
 import com.abnamro.assignment.recipes.constant.ApiConstants;
 import com.abnamro.assignment.recipes.exception.RecipeApiDatabaseException;
 import com.abnamro.assignment.recipes.mapper.DataMapper;
+import com.abnamro.assignment.recipes.persistence.RecipeEntitySpecification;
 import com.abnamro.assignment.recipes.persistence.RecipeRepository;
 import com.abnamro.assignment.recipes.persistence.model.RecipeEntity;
 import com.abnamro.assignment.recipes.util.TestUtils;
@@ -14,15 +16,21 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.AssertTrue;
 
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 public class RecipeApiServiceTest extends BaseIntegrationTest {
 
@@ -32,6 +40,18 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
     RecipeRepository recipeRepository;
     @InjectMocks
     RecipeApiService recipeApiService;
+
+    @Mock
+    Specification<RecipeEntity> mockSpec;
+	@Mock
+    Root<RecipeEntity> mockRecipeEntity;
+ 	@Mock
+    CriteriaQuery<?> query;
+ 	@Mock
+    CriteriaBuilder builder;
+
+    @Mock
+    Predicate predicate;
 
     @Test
     void addRecipe_happyFlow_returnSuccess() {
@@ -140,7 +160,7 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
         when(dataMapper.toRecipeEntity(any())).thenReturn(recipeEntity);
 
         doThrow(new RecipeApiDatabaseException("Error updating recipe in database", new Exception()))
-                .when(recipeRepository).save(recipeEntity);
+                .when(recipeRepository).saveAndFlush(recipeEntity);
 
         // recipeApiService.deleteEmployee(1L);
 
@@ -154,8 +174,250 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
 
         RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
 
+        Recipe  newRecipe = new Recipe();
+        newRecipe.setRecipeName("cake");
+        newRecipe.setIsVegetarian(false);
+        newRecipe.setNoOfServings(3);
+        newRecipe.setInstruction("whisk everything");
+        Set<String> ingredients = new HashSet<>(Arrays.asList("egg", "flour"));
+        newRecipe.setIngredients(ingredients);
+
+        RecipeEntity  newRecipeEntity = new RecipeEntity();
+        newRecipeEntity.setRecipeName("cake");
+        newRecipeEntity.setIsVegetarian(false);
+        newRecipeEntity.setNoOfServings(3);
+        newRecipeEntity.setInstruction("whisk everything");
+        Set<String> ingredientSet = new HashSet<>(Arrays.asList("egg", "flour"));
+        newRecipeEntity.setIngredients(ingredientSet);
+
+        when(dataMapper.toRecipeEntity(newRecipe)).thenReturn(newRecipeEntity);
         when(recipeRepository.findById(1L)).thenReturn(Optional.of(recipeEntity));
+        when(recipeRepository.saveAndFlush(any())).thenReturn(newRecipeEntity);
+
+      // recipeApiService.updateRecipe(newRecipe, 1L);
+
+        assertDoesNotThrow(() -> recipeApiService.updateRecipe(newRecipe, 1L));
+
+        Mockito.verify(recipeRepository, times(1)).saveAndFlush(any());
+
 
     }
+
+    @Test
+    void updateRecipe_updateIsVegetarian_returnSuccess() {
+
+        RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
+
+        Recipe  newRecipe = new Recipe();
+        newRecipe.setIsVegetarian(false);
+
+        RecipeEntity  newRecipeEntity = new RecipeEntity();
+        newRecipeEntity.setIsVegetarian(true);
+
+        when(dataMapper.toRecipeEntity(newRecipe)).thenReturn(newRecipeEntity);
+        when(recipeRepository.findById(1L)).thenReturn(Optional.of(recipeEntity));
+        when(recipeRepository.saveAndFlush(any())).thenReturn(newRecipeEntity);
+
+        // recipeApiService.updateRecipe(newRecipe, 1L);
+
+        assertDoesNotThrow(() -> recipeApiService.updateRecipe(newRecipe, 1L));
+
+        Mockito.verify(recipeRepository, times(1)).saveAndFlush(any());
+
+
+    }
+
+    @Test
+    void updateRecipe_updateRecipeName_returnSuccess() {
+
+        RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
+
+        Recipe  newRecipe = new Recipe();
+        newRecipe.setRecipeName("cake");
+
+        RecipeEntity  newRecipeEntity = new RecipeEntity();
+        newRecipeEntity.setRecipeName("cake");
+
+        when(dataMapper.toRecipeEntity(newRecipe)).thenReturn(newRecipeEntity);
+        when(recipeRepository.findById(1L)).thenReturn(Optional.of(recipeEntity));
+        when(recipeRepository.saveAndFlush(any())).thenReturn(newRecipeEntity);
+
+        // recipeApiService.updateRecipe(newRecipe, 1L);
+
+        assertDoesNotThrow(() -> recipeApiService.updateRecipe(newRecipe, 1L));
+
+        Mockito.verify(recipeRepository, times(1)).saveAndFlush(any());
+
+
+    }
+
+    @Test
+    void getRecipe_getAllRecipes_returnSuccess() {
+
+
+        List<RecipeEntity> recipeEntities = new ArrayList<>();
+        recipeEntities.add(TestUtils.createRecipeEntity());
+
+//        final Specification<RecipeEntity> recipeSpecification = RecipeEntitySpecification.getRecipes(null,
+//                null, null,
+//                null, null);
+//
+//        recipeSpecification.toPredicate(mockRecipeEntity, query, builder);
+
+        when(recipeRepository.findAll(any(Specification.class))).thenReturn(recipeEntities);
+
+        RecipesResponse recipesResponse = recipeApiService.getAllRecipes(null,
+                null, null,
+                null, null);
+
+        assertEquals(recipesResponse.getRecipesResponse().size(), 1);
+
+
+    }
+
+    @Test
+    void getRecipe_getOnlyVegitarianRecipes_returnSuccess() {
+
+
+        List<RecipeEntity> recipeEntities = new ArrayList<>();
+        RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
+        recipeEntity.setIsVegetarian(true);
+        recipeEntities.add(TestUtils.createRecipeEntity());
+
+//        final Specification<RecipeEntity> recipeSpecification = RecipeEntitySpecification.getRecipes(null,
+//                null, null,
+//                null, null);
+//
+//        recipeSpecification.toPredicate(mockRecipeEntity, query, builder);
+
+        when(recipeRepository.findAll(any(Specification.class))).thenReturn(recipeEntities);
+
+        RecipesResponse recipesResponse = recipeApiService.getAllRecipes(true,
+                null, null,
+                null, null);
+
+        assertEquals(recipesResponse.getRecipesResponse().size(), 1);
+
+
+    }
+
+    @Test
+    void getRecipe_getByNoOfServings_returnSuccess() {
+
+
+        List<RecipeEntity> recipeEntities = new ArrayList<>();
+        RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
+        recipeEntity.setNoOfServings(5);
+        recipeEntities.add(TestUtils.createRecipeEntity());
+
+//        final Specification<RecipeEntity> recipeSpecification = RecipeEntitySpecification.getRecipes(null,
+//                null, null,
+//                null, null);
+//
+//        recipeSpecification.toPredicate(mockRecipeEntity, query, builder);
+
+        when(recipeRepository.findAll(any(Specification.class))).thenReturn(recipeEntities);
+
+        RecipesResponse recipesResponse = recipeApiService.getAllRecipes(null,
+                null, 5,
+                null, null);
+
+        assertEquals(recipesResponse.getRecipesResponse().size(), 1);
+
+
+    }
+
+
+    @Test
+    void getRecipe_getByPresentIngredients_returnSuccess() {
+
+
+        List<RecipeEntity> recipeEntities = new ArrayList<>();
+        RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
+        recipeEntities.add(recipeEntity);
+
+//        final Specification<RecipeEntity> recipeSpecification = RecipeEntitySpecification.getRecipes(null,
+//                null, null,
+//                null, null);
+//
+//        recipeSpecification.toPredicate(mockRecipeEntity, query, builder);
+
+        when(recipeRepository.findAll(any(Specification.class))).thenReturn(recipeEntities);
+
+        RecipesResponse recipesResponse = recipeApiService.getAllRecipes(null,
+                null, null,
+                Arrays.asList("sugar"), null);
+
+        assertEquals(recipesResponse.getRecipesResponse().size(), 1);
+
+
+    }
+
+
+
+    @Test
+    void getRecipe_getByAbsentIngredients_returnSuccess() {
+
+
+        List<RecipeEntity> recipeEntities = new ArrayList<>();
+        RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
+        recipeEntities.add(recipeEntity);
+
+//        final Specification<RecipeEntity> recipeSpecification = RecipeEntitySpecification.getRecipes(null,
+//                null, null,
+//                null, null);
+//
+//        recipeSpecification.toPredicate(mockRecipeEntity, query, builder);
+
+        when(recipeRepository.findAll(any(Specification.class))).thenReturn(recipeEntities);
+
+        RecipesResponse recipesResponse = recipeApiService.getAllRecipes(null,
+                null, null,
+                null, Arrays.asList("eggs"));
+
+        assertEquals(recipesResponse.getRecipesResponse().size(), 1);
+
+
+    }
+
+
+    @Test
+    void getRecipe_getByAllSearchCriterias_returnSuccess() {
+
+
+        List<RecipeEntity> recipeEntities = new ArrayList<>();
+        RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
+        recipeEntities.add(recipeEntity);
+
+//        final Specification<RecipeEntity> recipeSpecification = RecipeEntitySpecification.getRecipes(null,
+//                null, null,
+//                null, null);
+//
+//        recipeSpecification.toPredicate(mockRecipeEntity, query, builder);
+
+        when(recipeRepository.findAll(any(Specification.class))).thenReturn(recipeEntities);
+
+        RecipesResponse recipesResponse = recipeApiService.getAllRecipes(false,
+                "put", 3,
+                Arrays.asList("sugar"), Arrays.asList("eggs"));
+
+        assertEquals(recipesResponse.getRecipesResponse().size(), 1);
+
+
+    }
+
+
+    @Test
+    void getRecipe_idNotFound_throwException() {
+
+        when(recipeRepository.findById(1L)).thenReturn(Optional.empty());
+
+
+        assertThrows(
+                RecipeApiDatabaseException.class,
+                () -> recipeApiService.getAllRecipes(null, null, null, null, null));
+    }
+
+
 
 }

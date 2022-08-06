@@ -50,7 +50,7 @@ public class RecipeEntity {
     private Long id;
     @Column(name = "RECIPE_NAME", nullable = false)
     private String recipeName;
-    private boolean isVegetarian;
+    private Boolean isVegetarian;
     private Integer noOfServings;
     @ElementCollection
     @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "id"))

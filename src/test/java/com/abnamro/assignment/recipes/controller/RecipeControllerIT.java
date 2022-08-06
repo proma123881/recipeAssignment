@@ -3,9 +3,12 @@ package com.abnamro.assignment.recipes.controller;
 import com.abnamro.assignment.recipes.BaseIntegrationTest;
 import com.abnamro.assignment.recipes.api.model.Recipe;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.LinkedMultiValueMap;
@@ -23,9 +26,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+//@Sql(scripts = "clean.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
+//@Sql(scripts = "data.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
+
+
 public class RecipeControllerIT  extends BaseIntegrationTest {
 
 
+    @AfterAll
+    public static void cleanUp(){
+        System.out.println("After All cleanUp() method called");
+    }
 
     @Test
     void addRecipes_happyFlow_returnIsCreated() throws Exception {
@@ -236,8 +247,8 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-               .andExpect(jsonPath("$[0].vegetarian").value(true))
-                .andExpect(jsonPath("$[1].vegetarian").value(true));
+               .andExpect(jsonPath("$[0].isVegetarian").value(true))
+                .andExpect(jsonPath("$[1].isVegetarian").value(true));
 
     }
 
@@ -249,7 +260,7 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].vegetarian").value(false));
+                .andExpect(jsonPath("$[0].isVegetarian").value(false));
 
     }
 
