@@ -1,16 +1,13 @@
 package com.abnamro.assignment.recipes.api.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.validation.annotation.Validated;
-
 import javax.validation.constraints.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import org.springframework.validation.annotation.Validated;
 
 /** Recipe model class
  * Represent model class for API request

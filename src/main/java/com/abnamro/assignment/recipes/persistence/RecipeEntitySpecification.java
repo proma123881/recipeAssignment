@@ -3,18 +3,20 @@ package com.abnamro.assignment.recipes.persistence;
 import com.abnamro.assignment.recipes.persistence.model.RecipeEntity;
 import com.abnamro.assignment.recipes.persistence.model.RecipeEntity_;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 import static com.abnamro.assignment.recipes.constant.ApiConstants.*;
 import static org.springframework.data.jpa.domain.Specification.where;
 
-@Component
+//@Component
 public class RecipeEntitySpecification {
 
-    public static Specification<RecipeEntity> getRecipes(Boolean isVegetarian, String instructionContains, Integer noOfServings, List<String> presentIngredients,
-                                                  List<String> absentIngredients) {
+    public static Specification<RecipeEntity> getRecipes(Boolean isVegetarian,
+                                                         String instructionContains,
+                                                         Integer noOfServings,
+                                                         List<String> presentIngredients,
+                                                         List<String> absentIngredients) {
 
         Specification<RecipeEntity> spec = where(isVegetarian(isVegetarian))
                 .and(instructionContains(instructionContains))
@@ -46,7 +48,8 @@ public class RecipeEntitySpecification {
 
     static Specification<RecipeEntity> instructionContains(String instructionContains) {
         if (instructionContains != null) {
-            return (recipe, cq, cb) -> cb.like(cb.lower(recipe.get(INSTRUCTION)), "%" + instructionContains.toLowerCase() + "%");
+            return (recipe, cq, cb) -> cb.like(cb.lower(recipe.get(INSTRUCTION)),
+                    "%" + instructionContains.toLowerCase() + "%");
         } else {
             return null;
         }
@@ -66,8 +69,7 @@ public class RecipeEntitySpecification {
     static Specification<RecipeEntity> containtsIngredients(String ingredient) {
         if (ingredient != null) {
             return (recipe, cq, cb) -> cb.isMember(ingredient, recipe.get(RecipeEntity_.ingredients));
-        }
-        else {
+        } else {
             return null;
         }
     }

@@ -6,22 +6,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.apache.commons.lang3.StringUtils;
 import com.abnamro.assignment.recipes.api.model.Error;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+
+
 
 @ControllerAdvice
 @Slf4j
@@ -50,7 +45,8 @@ public class RecipeApiExceptionHandler extends ResponseEntityExceptionHandler  {
         String errorCode = exception.getError().getCode();
         String errorName = exception.getError().getName();
         String errorDescription = exception.getMessage();
-        RecipeApiResponse recipeApiResponse = createErrorResponse(new Error(errorCode, errorName, errorDescription, requestURI));
+        RecipeApiResponse recipeApiResponse = createErrorResponse(new Error(errorCode,
+                errorName, errorDescription, requestURI));
         HttpStatus httpStatus = exception.getError() == null ? HttpStatus.INTERNAL_SERVER_ERROR : exception.getError().getHttpStatus();
         return ResponseEntity.status(httpStatus).body(recipeApiResponse);
     }
