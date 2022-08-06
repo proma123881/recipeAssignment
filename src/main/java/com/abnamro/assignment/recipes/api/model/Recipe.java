@@ -19,7 +19,7 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
 @Validated
 public class Recipe {

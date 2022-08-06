@@ -18,8 +18,8 @@ import java.util.Set;
  * @version 1.0
  */
 @Getter
-@Setter
-@AllArgsConstructor
+//@Setter
+//@AllArgsConstructor
 @NoArgsConstructor
 public class RecipesResponse extends  RecipeApiResponse{
    @JsonValue

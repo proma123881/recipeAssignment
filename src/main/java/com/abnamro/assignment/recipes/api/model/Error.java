@@ -5,8 +5,8 @@ import lombok.*;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@Setter
-@ToString
+//@Setter
+//@ToString
 public class Error {
 
 

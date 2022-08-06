@@ -21,7 +21,7 @@ import java.util.Set;
  */
 @Getter
 @Setter
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
 public class RecipeResponse {
     private Long id;

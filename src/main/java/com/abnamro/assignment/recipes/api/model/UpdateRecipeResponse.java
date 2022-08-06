@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
 public class UpdateRecipeResponse extends RecipeApiResponse {
     private Long id;
