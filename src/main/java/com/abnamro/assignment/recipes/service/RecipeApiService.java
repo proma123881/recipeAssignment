@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import static com.abnamro.assignment.recipes.constant.ApiConstants.*;
@@ -41,25 +43,18 @@ public class RecipeApiService {
 
     public RecipeId updateRecipe(Recipe newRecipe, Long id) {
 
-
-
         RecipeEntity recipeEntity = recipeRepository.findById(id)
                 .map(recipe -> {
-                    if (newRecipe.getRecipeName() == null) {
-                        newRecipe.setRecipeName(recipe.getRecipeName());
-                    }
-                    if (newRecipe.getIngredients() == null || newRecipe.getIngredients().isEmpty()) {
-                        newRecipe.setIngredients(recipe.getIngredients());
-                    }
-                    if (newRecipe.getInstruction() == null) {
-                        newRecipe.setInstruction(recipe.getInstruction());
-                    }
-                    if (newRecipe.getIsVegetarian() == null) {
-                        newRecipe.setIsVegetarian(recipe.getIsVegetarian());
-                    }
-                    if (newRecipe.getNoOfServings() == null) {
-                        newRecipe.setNoOfServings(recipe.getNoOfServings());
-                    }
+                    newRecipe.setRecipeName(
+                     Optional.ofNullable(newRecipe.getRecipeName()).orElse(recipe.getRecipeName()));
+                    newRecipe.setIngredients(
+                            Optional.ofNullable(newRecipe.getIngredients()).orElse(recipe.getIngredients()));
+                    newRecipe.setInstruction(
+                            Optional.ofNullable(newRecipe.getInstruction()).orElse(recipe.getInstruction()));
+                    newRecipe.setIsVegetarian(
+                            Optional.ofNullable(newRecipe.getIsVegetarian()).orElse(recipe.getIsVegetarian()));
+                    newRecipe.setNoOfServings(
+                            Optional.ofNullable(newRecipe.getNoOfServings()).orElse(recipe.getNoOfServings()));
                     RecipeEntity recipeEntity1 = dataMapper.toRecipeEntity(newRecipe);
                     recipeEntity1.setId(id);
                     try {
@@ -121,11 +116,6 @@ public class RecipeApiService {
 
         RecipesResponse recipesResponse = new RecipesResponse();
 
-//        recipeEntities.stream().map(recipeEntity -> {
-//            RecipeResponse recipeResponse = dataMapper.toRecipeResponse(recipeEntity);
-//            recipesResponse.getRecipesResponse().add(recipeResponse);
-//            return  recipesResponse;
-//        });
         recipeEntities.forEach(recipeEntity -> {
             RecipeResponse recipeResponse = dataMapper.toRecipeResponse(recipeEntity);
             recipesResponse.getRecipesResponse().add(recipeResponse);
