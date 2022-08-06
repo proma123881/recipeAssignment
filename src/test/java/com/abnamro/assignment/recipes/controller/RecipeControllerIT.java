@@ -72,7 +72,8 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
                 .content(objectMapper.writeValueAsString(recipe))).andExpect(status().isBadRequest())
                 .andDo(print());
 
-     assertTrue(resultActions.andReturn().getResponse().getContentAsString().contains("recipeName: must not be blank"));
+     assertTrue(resultActions.andReturn().getResponse().getContentAsString()
+             .contains("recipeName: must not be blank"));
 
 
     }
@@ -93,7 +94,8 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
                 .content(objectMapper.writeValueAsString(recipe))).andExpect(status().isBadRequest())
                 .andDo(print());
 
-        assertTrue(resultActions.andReturn().getResponse().getContentAsString().contains("recipeName: must not be blank"));
+        assertTrue(resultActions.andReturn().getResponse().getContentAsString()
+                .contains("recipeName: must not be blank"));
 
 
     }
@@ -114,7 +116,8 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
                 .content(objectMapper.writeValueAsString(recipe))).andExpect(status().isBadRequest())
                 .andDo(print());
 
-        assertTrue(resultActions.andReturn().getResponse().getContentAsString().contains("isVegetarian: must not be null"));
+        assertTrue(resultActions.andReturn().getResponse().getContentAsString()
+                .contains("isVegetarian: must not be null"));
 
 
     }
@@ -135,7 +138,8 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
                 .content(objectMapper.writeValueAsString(recipe))).andExpect(status().isBadRequest())
                 .andDo(print());
 
-        assertTrue(resultActions.andReturn().getResponse().getContentAsString().contains("noOfServings: must not be null"));
+        assertTrue(resultActions.andReturn().getResponse().getContentAsString()
+                .contains("noOfServings: must not be null"));
 
 
     }
@@ -156,7 +160,8 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
                 .content(objectMapper.writeValueAsString(recipe))).andExpect(status().isBadRequest())
                 .andDo(print());
 
-        assertTrue(resultActions.andReturn().getResponse().getContentAsString().contains("noOfServings: must be greater than 0"));
+        assertTrue(resultActions.andReturn().getResponse().getContentAsString()
+                .contains("noOfServings: must be greater than 0"));
 
 
     }
@@ -195,7 +200,8 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
                 .content(objectMapper.writeValueAsString(recipe))).andExpect(status().isBadRequest())
                 .andDo(print());
 
-        assertTrue(resultActions.andReturn().getResponse().getContentAsString().contains("ingredients: must not be empty"));
+        assertTrue(resultActions.andReturn().getResponse().getContentAsString()
+                .contains("ingredients: must not be empty"));
 
     }
 

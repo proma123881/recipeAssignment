@@ -1,9 +1,6 @@
 package com.abnamro.assignment.recipes.controller;
 
-import com.abnamro.assignment.recipes.api.model.Recipe;
-import com.abnamro.assignment.recipes.api.model.RecipeApiResponse;
-import com.abnamro.assignment.recipes.api.model.RecipeId;
-import com.abnamro.assignment.recipes.api.model.RecipesResponse;
+import com.abnamro.assignment.recipes.api.model.*;
 import com.abnamro.assignment.recipes.persistence.model.RecipeEntity;
 import com.abnamro.assignment.recipes.service.RecipeApiService;
 import lombok.AllArgsConstructor;
@@ -63,9 +60,9 @@ public class RecipeController {
     @PutMapping("/recipes/{id}")
     public ResponseEntity<?> updateRecipe(@RequestBody Recipe newRecipe, @PathVariable Long id) {
 
-        RecipeId recipeId = recipeApiService.updateRecipe(newRecipe, id);
+        UpdateRecipeResponse updateRecipeResponse = recipeApiService.updateRecipe(newRecipe, id);
 
-        return apiResponse(recipeId, HttpStatus.OK);
+        return apiResponse(updateRecipeResponse, HttpStatus.OK);
 
     }
 

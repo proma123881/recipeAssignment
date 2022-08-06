@@ -41,7 +41,7 @@ public class RecipeApiService {
         return dataMapper.toRecipeId(recipeEntitySaved);
     }
 
-    public RecipeId updateRecipe(Recipe newRecipe, Long id) {
+    public UpdateRecipeResponse updateRecipe(Recipe newRecipe, Long id) {
 
         RecipeEntity recipeEntity = recipeRepository.findById(id)
                 .map(recipe -> {
@@ -71,7 +71,7 @@ public class RecipeApiService {
                 });
 
 
-       return dataMapper.toRecipeId(recipeEntity);
+       return dataMapper.toUpdateRecipeResponse(recipeEntity);
     }
 
     public void deleteEmployee(Long id) {

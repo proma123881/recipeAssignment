@@ -1,4 +1,4 @@
-create sequence hibernate_sequence;
+create sequence HIBERNATE_SEQUENCE;
 
 DROP TABLE IF EXISTS RECIPE;
 
