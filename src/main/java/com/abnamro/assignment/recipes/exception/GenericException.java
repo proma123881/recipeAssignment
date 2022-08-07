@@ -4,7 +4,7 @@ import com.abnamro.assignment.recipes.api.model.Error;
 import lombok.Getter;
 
 
-/** GenericException Handler for the API
+/** GenericException Handler for the API.
  * @author Proma Chowdhury
  * @version 1.0
  */

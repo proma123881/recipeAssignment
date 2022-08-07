@@ -3,6 +3,12 @@ package com.abnamro.assignment.recipes.constant;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * ApiConstants constant class.
+ * Represent constant class for RecipeApiApplication
+ * @author Proma Chowdhury
+ * @version 1.0
+ */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApiConstants {
 
@@ -19,8 +25,6 @@ public class ApiConstants {
     public static final String IS_VEGETARIAN = "isVegetarian";
     public static final String INSTRUCTION = "instruction";
     public static final String NO_OF_SERVINGS = "noOfServings";
-
-
 
 
 }

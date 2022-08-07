@@ -1,31 +1,36 @@
 package com.abnamro.assignment.recipes.exception;
 
+import com.abnamro.assignment.recipes.api.model.Error;
 import com.abnamro.assignment.recipes.api.model.RecipeApiResponse;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.apache.commons.lang3.StringUtils;
-import com.abnamro.assignment.recipes.api.model.Error;
-import org.springframework.web.context.request.WebRequest;
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 
+/** RecipeApiExceptionHandler Handler for the API.
+ * @author Proma Chowdhury
+ * @version 1.0
+ */
 
 @ControllerAdvice
 @Slf4j
-public class RecipeApiExceptionHandler extends ResponseEntityExceptionHandler  {
+public class RecipeApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     /**
-     * Builds a followUp uri
-     * @param request
+     * Builds a followUp uri.
+     *
+     * @param request httpServletRequest
      * @return URI
      */
     private String getRequestUriWithParameters(HttpServletRequest request) {
@@ -34,27 +39,32 @@ public class RecipeApiExceptionHandler extends ResponseEntityExceptionHandler  {
     }
 
     /**
-     * Builds Error for the Response Entity
-     * @param exception
-     * @param loggingMessage
-     * @param requestURI
-     * @return ResponseEntity
+     * Builds Error for the Response Entity.
+     *
+     * @param exception GenericException
+     * @param loggingMessage error message to log
+     * @param requestUri request uri
+     * @return ResponseEntity response entity to return
      */
-    private ResponseEntity<?> handleGenericError(GenericException exception, String loggingMessage, String requestURI) {
+    private ResponseEntity<?> handleGenericError(GenericException exception, String loggingMessage,
+                                                 String requestUri) {
         log.error(loggingMessage, exception);
-        String errorCode = exception.getError().getCode();
-        String errorName = exception.getError().getName();
+        Error error = exception.getError();
+        String errorCode = error.getCode();
+        String errorName = error.getName();
         String errorDescription = exception.getMessage();
         RecipeApiResponse recipeApiResponse = createErrorResponse(new Error(errorCode,
-                errorName, errorDescription, requestURI));
-        HttpStatus httpStatus = exception.getError() == null ? HttpStatus.INTERNAL_SERVER_ERROR : exception.getError().getHttpStatus();
+                errorName, errorDescription, requestUri));
+        HttpStatus httpStatus = exception.getError() == null ? HttpStatus.INTERNAL_SERVER_ERROR :
+                exception.getError().getHttpStatus();
         return ResponseEntity.status(httpStatus).body(recipeApiResponse);
     }
 
     /**
-     * Adds Error for the MusicApiResponse
-     * @param error
-     * @return musicAPIResponse
+     * Adds Error for the RecipeApiResponse.
+     *
+     * @param error error
+     * @return RecipeApiResponse
      */
     private RecipeApiResponse createErrorResponse(Error error) {
         RecipeApiResponse recipeApiResponse = new RecipeApiResponse();
@@ -62,24 +72,20 @@ public class RecipeApiExceptionHandler extends ResponseEntityExceptionHandler  {
         return recipeApiResponse;
     }
 
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
-//        return new ResponseEntity<>("not valid due to validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-//    }
-
     /**
-     * Handles mongodb exception
-     * @param backendException
-     * @param request
-     * @return ResponseEntity
+     * Handles RecipeApiDatabaseException exception.
+     *
+     * @param backendException backend exception
+     * @param request request
+     * @return ResponseEntity response entity to return
      */
 
     @org.springframework.web.bind.annotation.ExceptionHandler(RecipeApiDatabaseException.class)
-    public ResponseEntity<?> handleBackendException(RecipeApiDatabaseException backendException, HttpServletRequest request) {
-        String requestURI = getRequestUriWithParameters(request);
-        String loggingMessage = String.format(backendException.getMessage() + " at '%s'", requestURI);
-        return handleGenericError(backendException, loggingMessage, requestURI);
+    public ResponseEntity<?> handleBackendException(RecipeApiDatabaseException backendException,
+                                                    HttpServletRequest request) {
+        String requestUri = getRequestUriWithParameters(request);
+        String loggingMessage = String.format(backendException.getMessage() + " at '%s'", requestUri);
+        return handleGenericError(backendException, loggingMessage, requestUri);
     }
 
     @Override
@@ -88,7 +94,7 @@ public class RecipeApiExceptionHandler extends ResponseEntityExceptionHandler  {
             HttpHeaders headers,
             HttpStatus status,
             WebRequest request) {
-        List<String> errors = new ArrayList<String>();
+        List<String> errors = new ArrayList<>();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.add(error.getField() + ": " + error.getDefaultMessage());
         }

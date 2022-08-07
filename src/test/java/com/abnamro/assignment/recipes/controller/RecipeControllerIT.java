@@ -2,41 +2,24 @@ package com.abnamro.assignment.recipes.controller;
 
 import com.abnamro.assignment.recipes.BaseIntegrationTest;
 import com.abnamro.assignment.recipes.api.model.Recipe;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.util.LinkedMultiValueMap;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.h2.value.ValueEnumBase.get;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@Sql(scripts = "clean.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
-//@Sql(scripts = "data.sql", executionPhase = ExecutionPhase.BEFORE_TEST_METHOD)
-
-
-public class RecipeControllerIT  extends BaseIntegrationTest {
-
-
-    @AfterAll
-    public static void cleanUp(){
-        System.out.println("After All cleanUp() method called");
-    }
+public class RecipeControllerIT extends BaseIntegrationTest {
 
     @Test
     void addRecipes_happyFlow_returnIsCreated() throws Exception {
@@ -50,10 +33,10 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
         recipe.setIngredients(ingredients);
 
         mockMvc.perform(post("/recipes")
-        .contentType("application/json")
-        .content(objectMapper.writeValueAsString(recipe))).andExpect(status().isCreated())
-         .andDo(print())
-         .andExpect(jsonPath("$.id", is(1)));
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(recipe))).andExpect(status().isCreated())
+                .andDo(print())
+                .andExpect(jsonPath("$.id", is(1)));
 
     }
 
@@ -67,13 +50,13 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
         Set<String> ingredients = new HashSet<>(Arrays.asList("chocolate", "sugar"));
         recipe.setIngredients(ingredients);
 
-       ResultActions resultActions = mockMvc.perform(post("/recipes")
+        ResultActions resultActions = mockMvc.perform(post("/recipes")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(recipe))).andExpect(status().isBadRequest())
                 .andDo(print());
 
-     assertTrue(resultActions.andReturn().getResponse().getContentAsString()
-             .contains("recipeName: must not be blank"));
+        assertTrue(resultActions.andReturn().getResponse().getContentAsString()
+                .contains("recipeName: must not be blank"));
 
 
     }
@@ -105,7 +88,6 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
 
         Recipe recipe = new Recipe();
         recipe.setRecipeName("muffin");
-        //recipe.setIsVegetarian(false);
         recipe.setNoOfServings(4);
         recipe.setInstruction("put chocolate");
         Set<String> ingredients = new HashSet<>(Arrays.asList("chocla", "sugara"));
@@ -128,7 +110,6 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
         Recipe recipe = new Recipe();
         recipe.setRecipeName("muffin");
         recipe.setIsVegetarian(false);
-        //recipe.setNoOfServings(4);
         recipe.setInstruction("put chocolate");
         Set<String> ingredients = new HashSet<>(Arrays.asList("chocla", "sugara"));
         recipe.setIngredients(ingredients);
@@ -192,8 +173,6 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
         recipe.setIsVegetarian(false);
         recipe.setNoOfServings(4);
         recipe.setInstruction("put chocolate");
-//        Set<String> ingredients = new HashSet<>(Arrays.asList("chocla", "sugara"));
-//        recipe.setIngredients(ingredients);
 
         ResultActions resultActions = mockMvc.perform(post("/recipes")
                 .contentType("application/json")
@@ -253,7 +232,7 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-               .andExpect(jsonPath("$[0].isVegetarian").value(true))
+                .andExpect(jsonPath("$[0].isVegetarian").value(true))
                 .andExpect(jsonPath("$[1].isVegetarian").value(true));
 
     }
@@ -369,7 +348,7 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
         Set<String> ingredients = new HashSet<>(Arrays.asList("chocla", "sugara"));
         recipe.setIngredients(ingredients);
 
-        this.mockMvc.perform( MockMvcRequestBuilders
+        this.mockMvc.perform(MockMvcRequestBuilders
                 .put("/recipes/{id}", 123)
                 .content(objectMapper.writeValueAsString(recipe))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -390,7 +369,7 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
         Set<String> ingredients = new HashSet<>(Arrays.asList("chocla", "sugara"));
         recipe.setIngredients(ingredients);
 
-        this.mockMvc.perform( MockMvcRequestBuilders
+        this.mockMvc.perform(MockMvcRequestBuilders
                 .put("/recipes/{id}", 81)
                 .content(objectMapper.writeValueAsString(recipe))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -406,7 +385,7 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
         Recipe recipe = new Recipe();
         recipe.setRecipeName("muffin");
 
-        this.mockMvc.perform( MockMvcRequestBuilders
+        this.mockMvc.perform(MockMvcRequestBuilders
                 .put("/recipes/{id}", 81)
                 .content(objectMapper.writeValueAsString(recipe))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -414,7 +393,6 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value("81"))
                 .andDo(print());
-
 
 
     }
@@ -425,7 +403,7 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
         Recipe recipe = new Recipe();
         recipe.setIsVegetarian(false);
 
-        this.mockMvc.perform( MockMvcRequestBuilders
+        this.mockMvc.perform(MockMvcRequestBuilders
                 .put("/recipes/{id}", 82)
                 .content(objectMapper.writeValueAsString(recipe))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -434,7 +412,6 @@ public class RecipeControllerIT  extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.id").value("82"))
                 .andDo(print());
     }
-
 
 
 }

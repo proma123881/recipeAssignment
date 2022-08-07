@@ -1,16 +1,31 @@
 package com.abnamro.assignment.recipes.persistence;
 
-import com.abnamro.assignment.recipes.persistence.model.RecipeEntity;
-import com.abnamro.assignment.recipes.persistence.model.RecipeEntity_;
-import org.springframework.data.jpa.domain.Specification;
-import java.util.List;
-import org.springframework.stereotype.Component;
-
-import static com.abnamro.assignment.recipes.constant.ApiConstants.*;
+import static com.abnamro.assignment.recipes.constant.ApiConstants.INSTRUCTION;
+import static com.abnamro.assignment.recipes.constant.ApiConstants.IS_VEGETARIAN;
+import static com.abnamro.assignment.recipes.constant.ApiConstants.NO_OF_SERVINGS;
 import static org.springframework.data.jpa.domain.Specification.where;
 
-//@Component
+import com.abnamro.assignment.recipes.persistence.model.RecipeEntity;
+import com.abnamro.assignment.recipes.persistence.model.RecipeEntity_;
+import java.util.List;
+import org.springframework.data.jpa.domain.Specification;
+
+/** RecipeEntitySpecification  for the API.
+ * @author Proma Chowdhury
+ * @version 1.0
+ */
 public class RecipeEntitySpecification {
+
+    /**
+     * get Recipe Specification.
+     *
+     * @param isVegetarian isVegetarian
+     * @param instructionContains instructionContains
+     * @param noOfServings noOfServings
+     * @param presentIngredients presentIngredients
+     * @param absentIngredients absentIngredients
+     * @return UpdateRecipeResponse
+     */
 
     public static Specification<RecipeEntity> getRecipes(Boolean isVegetarian,
                                                          String instructionContains,

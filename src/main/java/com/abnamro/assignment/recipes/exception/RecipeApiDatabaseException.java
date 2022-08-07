@@ -1,9 +1,9 @@
 package com.abnamro.assignment.recipes.exception;
 
-import lombok.Getter;
 import com.abnamro.assignment.recipes.api.model.Error;
+import lombok.Getter;
 
-/** MongoDbException Handler for the API
+/** RecipeApiDatabaseException Handler for the API.
  * @author Proma Chowdhury
  * @version 1.0
  */

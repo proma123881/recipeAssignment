@@ -8,7 +8,6 @@ import com.abnamro.assignment.recipes.api.model.RecipesResponse;
 import com.abnamro.assignment.recipes.constant.ApiConstants;
 import com.abnamro.assignment.recipes.exception.RecipeApiDatabaseException;
 import com.abnamro.assignment.recipes.mapper.DataMapper;
-import com.abnamro.assignment.recipes.persistence.RecipeEntitySpecification;
 import com.abnamro.assignment.recipes.persistence.RecipeRepository;
 import com.abnamro.assignment.recipes.persistence.model.RecipeEntity;
 import com.abnamro.assignment.recipes.util.TestUtils;
@@ -19,18 +18,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.validation.constraints.AssertTrue;
-
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.data.jpa.domain.Specification.where;
 
 public class RecipeApiServiceTest extends BaseIntegrationTest {
 
@@ -45,7 +37,7 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
     @Test
     void addRecipe_happyFlow_returnSuccess() {
 
-       RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
+        RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
 
         when(dataMapper.toRecipeEntity(any())).thenReturn(recipeEntity);
 
@@ -74,7 +66,7 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
         when(dataMapper.toRecipeId(recipeEntity)).thenReturn(TestUtils.createRecipeId());
 
         Exception exception = Assertions.assertThrows(RecipeApiDatabaseException.class,
-                () ->   recipeApiService.addRecipe(TestUtils.createRecipe()));
+                () -> recipeApiService.addRecipe(TestUtils.createRecipe()));
 
         String expectedMessage = ApiConstants.DATABASE_ERROR_MESSAGE_SAVE;
         String actualMessage = exception.getMessage();
@@ -102,8 +94,6 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
 
         when(recipeRepository.findById(1L)).thenReturn(Optional.empty());
 
-        //recipeApiService.deleteEmployee(1L);
-
         assertThrows(
                 RecipeApiDatabaseException.class,
                 () -> recipeApiService.deleteEmployee(1L));
@@ -130,10 +120,9 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
 
         when(recipeRepository.findById(1L)).thenReturn(Optional.empty());
 
-
         assertThrows(
                 RecipeApiDatabaseException.class,
-                () -> recipeApiService.updateRecipe(TestUtils.createRecipe(),1L));
+                () -> recipeApiService.updateRecipe(TestUtils.createRecipe(), 1L));
     }
 
     @Test
@@ -151,7 +140,7 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
 
         assertThrows(
                 RecipeApiDatabaseException.class,
-                () -> recipeApiService.updateRecipe(TestUtils.createRecipe(),  1L));
+                () -> recipeApiService.updateRecipe(TestUtils.createRecipe(), 1L));
     }
 
     @Test
@@ -159,7 +148,7 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
 
         RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
 
-        Recipe  newRecipe = new Recipe();
+        Recipe newRecipe = new Recipe();
         newRecipe.setRecipeName("cake");
         newRecipe.setIsVegetarian(false);
         newRecipe.setNoOfServings(3);
@@ -167,7 +156,7 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
         Set<String> ingredients = new HashSet<>(Arrays.asList("egg", "flour"));
         newRecipe.setIngredients(ingredients);
 
-        RecipeEntity  newRecipeEntity = new RecipeEntity();
+        RecipeEntity newRecipeEntity = new RecipeEntity();
         newRecipeEntity.setRecipeName("cake");
         newRecipeEntity.setIsVegetarian(false);
         newRecipeEntity.setNoOfServings(3);
@@ -192,10 +181,10 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
 
         RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
 
-        Recipe  newRecipe = new Recipe();
+        Recipe newRecipe = new Recipe();
         newRecipe.setIsVegetarian(false);
 
-        RecipeEntity  newRecipeEntity = new RecipeEntity();
+        RecipeEntity newRecipeEntity = new RecipeEntity();
         newRecipeEntity.setIsVegetarian(true);
 
         when(dataMapper.toRecipeEntity(newRecipe)).thenReturn(newRecipeEntity);
@@ -215,10 +204,10 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
 
         RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
 
-        Recipe  newRecipe = new Recipe();
+        Recipe newRecipe = new Recipe();
         newRecipe.setRecipeName("cake");
 
-        RecipeEntity  newRecipeEntity = new RecipeEntity();
+        RecipeEntity newRecipeEntity = new RecipeEntity();
         newRecipeEntity.setRecipeName("cake");
 
         when(dataMapper.toRecipeEntity(newRecipe)).thenReturn(newRecipeEntity);
@@ -246,7 +235,7 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
                 null, null,
                 null, null);
 
-        assertEquals(recipesResponse.getRecipesResponse().size(), 1);
+        assertEquals(recipesResponse.getRecipes().size(), 1);
 
 
     }
@@ -266,7 +255,7 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
                 null, null,
                 null, null);
 
-        assertEquals(recipesResponse.getRecipesResponse().size(), 1);
+        assertEquals(recipesResponse.getRecipes().size(), 1);
 
 
     }
@@ -287,7 +276,7 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
                 null, 5,
                 null, null);
 
-        assertEquals(recipesResponse.getRecipesResponse().size(), 1);
+        assertEquals(recipesResponse.getRecipes().size(), 1);
 
 
     }
@@ -307,11 +296,10 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
                 null, null,
                 Arrays.asList("sugar"), null);
 
-        assertEquals(recipesResponse.getRecipesResponse().size(), 1);
+        assertEquals(recipesResponse.getRecipes().size(), 1);
 
 
     }
-
 
 
     @Test
@@ -322,19 +310,13 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
         RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
         recipeEntities.add(recipeEntity);
 
-//        final Specification<RecipeEntity> recipeSpecification = RecipeEntitySpecification.getRecipes(null,
-//                null, null,
-//                null, null);
-//
-//        recipeSpecification.toPredicate(mockRecipeEntity, query, builder);
-
         when(recipeRepository.findAll(any(Specification.class))).thenReturn(recipeEntities);
 
         RecipesResponse recipesResponse = recipeApiService.getAllRecipes(null,
                 null, null,
                 null, Arrays.asList("eggs"));
 
-        assertEquals(recipesResponse.getRecipesResponse().size(), 1);
+        assertEquals(recipesResponse.getRecipes().size(), 1);
 
 
     }
@@ -348,19 +330,13 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
         RecipeEntity recipeEntity = TestUtils.createRecipeEntity();
         recipeEntities.add(recipeEntity);
 
-//        final Specification<RecipeEntity> recipeSpecification = RecipeEntitySpecification.getRecipes(null,
-//                null, null,
-//                null, null);
-//
-//        recipeSpecification.toPredicate(mockRecipeEntity, query, builder);
-
         when(recipeRepository.findAll(any(Specification.class))).thenReturn(recipeEntities);
 
         RecipesResponse recipesResponse = recipeApiService.getAllRecipes(false,
                 "put", 3,
                 Arrays.asList("sugar"), Arrays.asList("eggs"));
 
-        assertEquals(recipesResponse.getRecipesResponse().size(), 1);
+        assertEquals(recipesResponse.getRecipes().size(), 1);
 
 
     }
@@ -376,7 +352,6 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
                 RecipeApiDatabaseException.class,
                 () -> recipeApiService.getAllRecipes(null, null, null, null, null));
     }
-
 
 
 }
