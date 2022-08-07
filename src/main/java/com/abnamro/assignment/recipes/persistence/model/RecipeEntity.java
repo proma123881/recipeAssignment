@@ -69,5 +69,6 @@ public class RecipeEntity {
     @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "ingredients")
     private Set<String> ingredients = new HashSet<>();
+    @Column(columnDefinition = "TEXT")
     private String instruction;
 }

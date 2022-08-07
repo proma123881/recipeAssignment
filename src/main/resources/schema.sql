@@ -7,7 +7,7 @@ create table RECIPE (
     RECIPE_NAME varchar(128) not null,
     IS_VEGETARIAN  bool not null,
     NO_OF_SERVINGS int not null,
-    INSTRUCTION varchar(255)
+    INSTRUCTION CLOB
 );
 
 
