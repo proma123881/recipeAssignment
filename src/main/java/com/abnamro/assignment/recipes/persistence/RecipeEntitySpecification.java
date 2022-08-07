@@ -82,19 +82,13 @@ public class RecipeEntitySpecification {
     }
 
     static Specification<RecipeEntity> containtsIngredients(String ingredient) {
-        if (ingredient != null) {
-            return (recipe, cq, cb) -> cb.isMember(ingredient, recipe.get(RecipeEntity_.ingredients));
-        } else {
-            return null;
-        }
+        return (recipe, cq, cb) -> cb.isMember(ingredient, recipe.get(RecipeEntity_.ingredients));
+
     }
 
     static Specification<RecipeEntity> notcontaintsIngredients(String ingredient) {
-        if (ingredient != null) {
-            return (recipe, cq, cb) -> cb.isNotMember(ingredient, recipe.get(RecipeEntity_.ingredients));
-        } else {
-            return null;
-        }
+        return (recipe, cq, cb) -> cb.isNotMember(ingredient, recipe.get(RecipeEntity_.ingredients));
+
     }
 
 }
