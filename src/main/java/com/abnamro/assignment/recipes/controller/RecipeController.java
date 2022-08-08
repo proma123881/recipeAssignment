@@ -108,7 +108,7 @@ public class RecipeController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteRecipe(@PathVariable Long id) {
 
-        recipeApiService.deleteEmployee(id);
+        recipeApiService.deleteRecipe(id);
     }
 
 

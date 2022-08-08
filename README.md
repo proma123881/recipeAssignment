@@ -1,8 +1,8 @@
 ## Technical stack requirements
-Maven,
-Java 8,
-Spring Boot 2.7.2,
-Hibernate 5.3.7.Final
+* Maven
+* Java 8
+* Spring Boot 2.7.2
+* Hibernate 5.3.7.Final
 
 ##Approach:
 
@@ -13,10 +13,10 @@ For Data persistence,I have used H2
 
 This API serves to expose below two endpoints.
 
-i) AddRecipe - Adding a new recipe
-ii) UpdateRecipe - Updating existing recipe
-iii) DeleteRecipe - Delete existing recipe
-iv) getRecipes - Search recipes
+1) AddRecipe - Adding a new recipe
+2) UpdateRecipe - Updating existing recipe
+3) DeleteRecipe - Delete existing recipe
+4) getRecipes - Search recipes
 
 ##Accessing RestAPI endpoints
 
@@ -48,7 +48,7 @@ Example response:
 
 2.PUT /recipes/{Id} - To update an existing recipe,
 
-i)id - Unique recipe Id (Created above),
+id - Unique recipe Id (Created above),
 ```PostMan 
 curl --header "Content-Type: application/json" --request PUT http://localhost:8082/recipes/{Id}
 ```
@@ -82,14 +82,14 @@ Example response:
 
 3.Delete /recipes/{Id} - To delete an existing recipe,
 
-i)id - Unique recipe Id (Created above),
+id - Unique recipe Id (Created above),
 ```PostMan 
 curl --header "Content-Type: application/json" --request Delete http://localhost:8082/recipes/{Id}
 ```
 
 * The recipe is deleted if found and if not returns an error
 
-3.Get /recipes - To search existing recipes
+4.Get /recipes - To search existing recipes
 
 ```PostMan 
 curl --location --request GET 'http://localhost:8082/recipes?instructionContains=toga

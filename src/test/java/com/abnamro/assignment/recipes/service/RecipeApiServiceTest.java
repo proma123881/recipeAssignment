@@ -82,9 +82,9 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
 
         when(recipeRepository.findById(1L)).thenReturn(Optional.of(recipeEntity));
 
-        recipeApiService.deleteEmployee(1L);
+        recipeApiService.deleteRecipe(1L);
 
-        assertDoesNotThrow(() -> recipeApiService.deleteEmployee(1L));
+        assertDoesNotThrow(() -> recipeApiService.deleteRecipe(1L));
 
 
     }
@@ -96,7 +96,7 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
 
         assertThrows(
                 RecipeApiDatabaseException.class,
-                () -> recipeApiService.deleteEmployee(1L));
+                () -> recipeApiService.deleteRecipe(1L));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class RecipeApiServiceTest extends BaseIntegrationTest {
 
         assertThrows(
                 RecipeApiDatabaseException.class,
-                () -> recipeApiService.deleteEmployee(1L));
+                () -> recipeApiService.deleteRecipe(1L));
     }
 
 

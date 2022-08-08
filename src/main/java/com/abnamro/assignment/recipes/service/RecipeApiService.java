@@ -106,7 +106,7 @@ public class RecipeApiService {
      *
      * @param id recipe id to be deleted
      */
-    public void deleteEmployee(Long id) {
+    public void deleteRecipe(Long id) {
 
         recipeRepository.findById(id).orElseThrow(() -> {
             Error error = new Error(DATABASE_ERROR_CODE_RECIPE_NOT_FOUND, DATABASE_ERROR_NAME_RECIPE_NOT_FOUND,

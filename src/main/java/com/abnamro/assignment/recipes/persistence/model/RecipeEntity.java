@@ -63,12 +63,14 @@ public class RecipeEntity {
     private Long id;
     @Column(name = "RECIPE_NAME", nullable = false)
     private String recipeName;
+    @Column(name = "IS_VEGETARIAN", nullable = false)
     private Boolean isVegetarian;
+    @Column(name = "NO_OF_SERVINGS", nullable = false)
     private Integer noOfServings;
     @ElementCollection
-    @CollectionTable(name = "recipe_ingredients", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "ingredients")
+    @CollectionTable(name = "RECIPE_INGREDIENTS", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "INGREDIENTS", nullable = false)
     private Set<String> ingredients = new HashSet<>();
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "INSTRUCTION", columnDefinition = "TEXT")
     private String instruction;
 }
