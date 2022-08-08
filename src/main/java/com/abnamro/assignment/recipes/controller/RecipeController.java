@@ -83,7 +83,7 @@ public class RecipeController {
      */
 
     @GetMapping("/recipes")
-    public ResponseEntity<?> getAllRecipes(@RequestParam(value = "isVegetarian", required = false) Boolean isVegetarian,
+    public ResponseEntity<?> getRecipes(@RequestParam(value = "isVegetarian", required = false) Boolean isVegetarian,
                                     @RequestParam(value = "instructionContains", required = false)
                                             String instructionContains,
                                     @RequestParam(value = "noOfServings", required = false) Integer noOfServings,
@@ -106,7 +106,7 @@ public class RecipeController {
      */
     @DeleteMapping("/recipes/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteEmployee(@PathVariable Long id) {
+    public void deleteRecipe(@PathVariable Long id) {
 
         recipeApiService.deleteEmployee(id);
     }
